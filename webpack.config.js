@@ -1,8 +1,8 @@
 module.exports = {
-	entry: `./src/js/background.js`,
+	entry: `./src/js/main.js`,
 	output: {
 		path: `${__dirname}/dist`,
-		filename: "bg_bundle.js"
+		filename: "main_bundle.js"
 	},
     devtool: 'cheap-module-source-map'
 };

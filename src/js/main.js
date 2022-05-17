@@ -1,11 +1,18 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, signInWithCredential, GoogleAuthProvider } from 'firebase/auth';
+import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { getFirestore, getDoc, setDoc, collection, doc } from 'firebase/firestore';
 
-var config = {
-    /* your config data */
+const firebaseConfig = {
+    apiKey: "AIzaSyCLMdDi3V0UuReHYUqR_kRe9NpSBrzbf4g",
+    authDomain: "gace-id.firebaseapp.com",
+    projectId: "gace-id",
+    storageBucket: "gace-id.appspot.com",
+    messagingSenderId: "814051818099",
+    appId: "1:814051818099:web:951ad46d171c8c519ec806"
 };
-const app = initializeApp(config);
+
+const app = initializeApp(firebaseConfig);
+const provider = new GoogleAuthProvider();
 
 const auth = getAuth();
 auth.languageCode = "ja";
@@ -16,7 +23,7 @@ const signout_button = document.getElementById('signout-button');
 const user_data_log = document.getElementById('user_data');
 
 function SignIn() {
-    startAuth(true);
+    startAuth();
     signin_button.style.display = "none";
     signout_button.style.display = "block";
 }
@@ -30,26 +37,14 @@ function SiginOut() {
     }
 }
 
-function startAuth(interactive) {
-    chrome.identity.getAuthToken({ interactive: !!interactive }, function (token) {
-        if (chrome.runtime.lastError && !interactive) {
-            console.log('It was not possible to get a token programmatically.');
-        } else if (chrome.runtime.lastError) {
-            console.error(JSON.stringify(chrome.runtime.lastError));
-        } else if (token) {
-            var credential = GoogleAuthProvider.credential(null, token);
-            signInWithCredential(auth, credential).catch(error => {
-                console.log(error);
-                if (error.code === 'auth/invalid-credential') {
-                    chrome.identity.removeCachedAuthToken({ token: token }, function () {
-                        startAuth(interactive);
-                    });
-                }
-            });
-        } else {
-            console.error('The OAuth Token was null');
-        }
-    });
+function startAuth() {
+    if (chrome.runtime.lastError) {
+        console.error(JSON.stringify(chrome.runtime.lastError));
+    } else {
+        signInWithPopup(auth, provider).catch(error => {
+            console.log(error);
+        });
+    }
 }
 
 auth.onAuthStateChanged(async function (user) {
@@ -60,7 +55,7 @@ auth.onAuthStateChanged(async function (user) {
         var uid = user.uid;
         signin_button.style.display = "none";
         signout_button.style.display = "block";
-        user_data_log.textContent = JSON.stringify(user);
+        user_data_log.textContent = JSON.stringify(user);/* 
         const user_data = await getDoc(doc(db, 'users', uid));
         if (!(user_data.exists())) {
             await setDoc(doc(collection(db, 'users'), uid), {
@@ -69,7 +64,7 @@ auth.onAuthStateChanged(async function (user) {
                 photo: photoURL,
                 id: uid
             });
-        }
+        } */
     } else {
         signin_button.style.display = "block";
         signout_button.style.display = "none";

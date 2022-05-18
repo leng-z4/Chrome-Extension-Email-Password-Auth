@@ -13,6 +13,8 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const provider = new GoogleAuthProvider();
+provider.addScope('https://www.googleapis.com/auth/userinfo.email');
+provider.addScope('https://www.googleapis.com/auth/userinfo.profile');
 
 const auth = getAuth();
 auth.languageCode = "ja";
@@ -41,13 +43,17 @@ function startAuth() {
     if (chrome.runtime.lastError) {
         console.error(JSON.stringify(chrome.runtime.lastError));
     } else {
-        signInWithPopup(auth, provider).catch(error => {
-            console.log(error);
-        });
+        signInWithPopup(auth, provider)
+            .then(result => {
+                console.log(result);
+            })
+            .catch(error => {
+                console.log(error);
+            });
     }
 }
 
-auth.onAuthStateChanged(async function (user) {
+/* auth.onAuthStateChanged(async function (user) {
     if (user) {
         var displayName = user.displayName;
         var email = user.email;
@@ -55,7 +61,7 @@ auth.onAuthStateChanged(async function (user) {
         var uid = user.uid;
         signin_button.style.display = "none";
         signout_button.style.display = "block";
-        user_data_log.textContent = JSON.stringify(user);/* 
+        user_data_log.textContent = JSON.stringify(user);
         const user_data = await getDoc(doc(db, 'users', uid));
         if (!(user_data.exists())) {
             await setDoc(doc(collection(db, 'users'), uid), {
@@ -64,12 +70,12 @@ auth.onAuthStateChanged(async function (user) {
                 photo: photoURL,
                 id: uid
             });
-        } */
+        }
     } else {
         signin_button.style.display = "block";
         signout_button.style.display = "none";
         user_data.textContent = '';
     }
-});
+}); */
 signin_button.addEventListener('click', SignIn, false);
 signout_button.addEventListener('click', SiginOut);

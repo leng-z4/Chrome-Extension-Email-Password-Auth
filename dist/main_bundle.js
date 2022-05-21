@@ -33654,22 +33654,26 @@ const firebaseConfig = {
 };
 
 const app = (0,firebase_app__WEBPACK_IMPORTED_MODULE_0__.initializeApp)(firebaseConfig);
-const provider = new firebase_auth__WEBPACK_IMPORTED_MODULE_1__.GoogleAuthProvider();
-provider.addScope('https://www.googleapis.com/auth/userinfo.email');
-provider.addScope('https://www.googleapis.com/auth/userinfo.profile');
-
 const auth = (0,firebase_auth__WEBPACK_IMPORTED_MODULE_1__.getAuth)();
 auth.languageCode = "ja";
 const db = (0,firebase_firestore__WEBPACK_IMPORTED_MODULE_2__.getFirestore)(app);
 
+let email = document.getElementById('email');
+let password = document.getElementById('password');
 const signin_button = document.getElementById('signin-button');
 const signout_button = document.getElementById('signout-button');
 const user_data_log = document.getElementById('user_data');
 
 function SignIn() {
-    startAuth();
-    signin_button.style.display = "none";
-    signout_button.style.display = "block";
+    if (email.value.length && password.value.length) {
+        email = email.value;
+        password = password.value;
+        console.log(email);
+        console.log(password);
+        startAuth(email, password);
+        signin_button.style.display = "none";
+        signout_button.style.display = "block";
+    }    
 }
 
 function SiginOut() {
@@ -33681,17 +33685,17 @@ function SiginOut() {
     }
 }
 
-function startAuth() {
+function startAuth(e, p) {
     if (chrome.runtime.lastError) {
         console.error(JSON.stringify(chrome.runtime.lastError));
     } else {
-        (0,firebase_auth__WEBPACK_IMPORTED_MODULE_1__.signInWithPopup)(auth, provider)
-            .then(result => {
-                console.log(result);
-            })
-            .catch(error => {
-                console.log(error);
-            });
+        (0,firebase_auth__WEBPACK_IMPORTED_MODULE_1__.createUserWithEmailAndPassword)(auth, e, p)
+        .then(UserCredential => {
+            const user = UserCredential.user;
+            console.log(user);
+        }).catch(error => {
+            console.log(error);
+        });
     }
 }
 

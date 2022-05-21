@@ -1,6 +1,6 @@
 {
     "manifest_version": 2,
-    "name": "Chrome Extension Google Api2",
+    "name": "Chrome Extension Email Password Auth",
     "description": "",
     "version": "1.0.0",
     "browser_action": {

@@ -1,5 +1,5 @@
 {
-  "name": "chrome_extension_google_api2",
+  "name": "chrome_extension_email_password_auth",
   "version": "1.0.0",
   "description": "",
   "main": "webpack.config.js",

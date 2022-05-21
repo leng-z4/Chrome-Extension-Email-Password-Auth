@@ -1,1 +1,1 @@
-# Chrome-Extension-Google-Api2
+# Chrome-Extension-Email-Password-Auth

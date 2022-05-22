@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
-import { getFirestore, getDoc, setDoc, collection, doc } from 'firebase/firestore';
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
+import { error } from './error.js';
 
 const firebaseConfig = {
     apiKey: "AIzaSyCLMdDi3V0UuReHYUqR_kRe9NpSBrzbf4g",
@@ -10,77 +10,73 @@ const firebaseConfig = {
     messagingSenderId: "814051818099",
     appId: "1:814051818099:web:951ad46d171c8c519ec806"
 };
-
-const app = initializeApp(firebaseConfig);
+initializeApp(firebaseConfig);
 const auth = getAuth();
 auth.languageCode = "ja";
-const db = getFirestore(app);
 
-let email = document.getElementById('email');
-let password = document.getElementById('password');
-const signin_button = document.getElementById('signin-button');
-const signout_button = document.getElementById('signout-button');
-const user_data_log = document.getElementById('user_data');
+const login_section = document.getElementById('login-section');
+const login_email = document.getElementById('login-email');
+const login_password = document.getElementById('login-password');
+const login_button = document.getElementById('login-button');
+const login_error = document.getElementById('login-error')
 
-function SignIn() {
-    if (email.value.length && password.value.length) {
-        email = email.value;
-        password = password.value;
-        console.log(email);
-        console.log(password);
-        startAuth(email, password);
-        signin_button.style.display = "none";
-        signout_button.style.display = "block";
-    }    
-}
+const signup_section = document.getElementById('signup-section');
+const signup_email = document.getElementById('signup-email');
+const signup_password = document.getElementById('signup-password');
+const signup_button = document.getElementById('signup-button');
+const signup_error = document.getElementById('signup-error');
 
-function SiginOut() {
-    if (auth.currentUser) {
-        auth.signOut();
-        signin_button.style.display = "block";
-        signout_button.style.display = "none";
-        user_data.textContent = ''
-    }
-}
+const user_data = document.getElementById('user-data');
+const user_email = document.getElementById('user-email');
+const user_id = document.getElementById('user-id');
+user_data.style.display = 'none';
 
-function startAuth(e, p) {
-    if (chrome.runtime.lastError) {
-        console.error(JSON.stringify(chrome.runtime.lastError));
-    } else {
-        createUserWithEmailAndPassword(auth, e, p)
-        .then(UserCredential => {
-            const user = UserCredential.user;
-            const id = user.uid;
-            console.log(user);
-        }).catch(error => {
-            console.log(error);
+const logout = document.getElementById('logout');
+logout.style.display = 'none';
+
+login_button.addEventListener('click', function () {
+    if (login_email.value.length && login_password.value.length) {
+        const email = login_email.value;
+        const password = login_password.value;
+        signInWithEmailAndPassword(auth, email, password).catch(e => {
+            const e_ja = error(e, 'signin');
+            login_error.textContent = e_ja;
         });
     }
-}
+});
 
-/* auth.onAuthStateChanged(async function (user) {
-    if (user) {
-        var displayName = user.displayName;
-        var email = user.email;
-        var photoURL = user.photoURL;
-        var uid = user.uid;
-        signin_button.style.display = "none";
-        signout_button.style.display = "block";
-        user_data_log.textContent = JSON.stringify(user);
-        const user_data = await getDoc(doc(db, 'users', uid));
-        if (!(user_data.exists())) {
-            await setDoc(doc(collection(db, 'users'), uid), {
-                name: displayName,
-                mail: email,
-                photo: photoURL,
-                id: uid
-            });
-        }
-    } else {
-        signin_button.style.display = "block";
-        signout_button.style.display = "none";
-        user_data.textContent = '';
+signup_button.addEventListener('click', function () {
+    if (signup_email.value.length && signup_password.value.length) {
+        const email = signup_email.value;
+        const password = signup_password.value;
+        createUserWithEmailAndPassword(auth, email, password).catch(e => {
+            const e_ja = error(e, 'signup');
+            signup_error.textContent = e_ja;
+        });
     }
-}); */
-signin_button.addEventListener('click', SignIn, false);
-signout_button.addEventListener('click', SiginOut);
+});
+
+logout.addEventListener('click', function () {
+    if (auth.currentUser) {
+        auth.signOut();
+        logout.style.display = 'none';
+        login_section.style.display = 'block';
+        signup_section.style.display = 'block';
+        user_email.textContent = '';
+        user_id.textContent = '';
+    }
+});
+
+auth.onAuthStateChanged(function (user) {
+    if (user) {
+        console.log(user);
+        user_email.textContent = user.email;
+        user_id.textContent = user.uid;
+        user_data.style.display = 'block';
+        login_section.style.display = 'none';
+        signup_section.style.display = 'none';
+        logout.style.display = 'block';
+        login_error.textContent = '';
+        signup_error.textContent = '';
+    }
+});

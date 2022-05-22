@@ -14157,6 +14157,7 @@ const firebaseConfig = {
 const auth = (0,firebase_auth__WEBPACK_IMPORTED_MODULE_1__.getAuth)();
 auth.languageCode = "ja";
 
+
 const login_section = document.getElementById('login-section');
 const login_email = document.getElementById('login-email');
 const login_password = document.getElementById('login-password');
@@ -14192,10 +14193,15 @@ signup_button.addEventListener('click', function () {
     if (signup_email.value.length && signup_password.value.length) {
         const email = signup_email.value;
         const password = signup_password.value;
-        (0,firebase_auth__WEBPACK_IMPORTED_MODULE_1__.createUserWithEmailAndPassword)(auth, email, password).catch(e => {
-            const e_ja = (0,_error_js__WEBPACK_IMPORTED_MODULE_2__.error)(e, 'signup');
-            signup_error.textContent = e_ja;
-        });
+        (0,firebase_auth__WEBPACK_IMPORTED_MODULE_1__.createUserWithEmailAndPassword)(auth, email, password)
+            .then((userCredential) => {
+                (0,firebase_auth__WEBPACK_IMPORTED_MODULE_1__.sendEmailVerification)(userCredential.user).then(() => {
+                    console.log('send');
+                })
+            }).catch(e => {
+                const e_ja = (0,_error_js__WEBPACK_IMPORTED_MODULE_2__.error)(e, 'signup');
+                signup_error.textContent = e_ja;
+            });
     }
 });
 

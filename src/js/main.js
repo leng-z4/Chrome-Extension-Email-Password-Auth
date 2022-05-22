@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { error } from './error.js';
 
 const firebaseConfig = {
@@ -13,6 +13,7 @@ const firebaseConfig = {
 initializeApp(firebaseConfig);
 const auth = getAuth();
 auth.languageCode = "ja";
+
 
 const login_section = document.getElementById('login-section');
 const login_email = document.getElementById('login-email');
@@ -49,10 +50,15 @@ signup_button.addEventListener('click', function () {
     if (signup_email.value.length && signup_password.value.length) {
         const email = signup_email.value;
         const password = signup_password.value;
-        createUserWithEmailAndPassword(auth, email, password).catch(e => {
-            const e_ja = error(e, 'signup');
-            signup_error.textContent = e_ja;
-        });
+        createUserWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                sendEmailVerification(userCredential.user).then(() => {
+                    console.log('send');
+                })
+            }).catch(e => {
+                const e_ja = error(e, 'signup');
+                signup_error.textContent = e_ja;
+            });
     }
 });
 

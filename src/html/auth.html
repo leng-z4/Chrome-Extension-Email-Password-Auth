@@ -7,13 +7,6 @@
 
 <body>
     <h3>Firebase Authentication</h3>
-    <section id="login-section">
-        <h1>ログイン</h1>
-        <input type="email" name="" id="login-email">
-        <input type="password" name="" id="login-password">
-        <p id="login-error"></p>
-        <button id="login-button">ログイン</button>
-    </section>
     <section id="signup-section">
         <h1>新規登録</h1>
         <input type="email" name="" id="signup-email">
@@ -25,6 +18,11 @@
         <div id="user-email"></div>
         <div id="user-id"></div>
     </section>
+    <section id="no-email-verified">
+        <p>メールアドレスの確認をしてください</p>
+        <button id="email-send">メールを送信</button>
+    </section>
+    <p id="email-verified">メールを送信しました。メールに記載されているURLをクリックして、メールアドレスの確認をしてください</p>    
     <button id="logout">ログアウト</button>
 </body>
 <script src="/main_bundle.js"></script>

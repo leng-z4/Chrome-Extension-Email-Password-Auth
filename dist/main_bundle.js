@@ -14157,13 +14157,6 @@ const firebaseConfig = {
 const auth = (0,firebase_auth__WEBPACK_IMPORTED_MODULE_1__.getAuth)();
 auth.languageCode = "ja";
 
-
-const login_section = document.getElementById('login-section');
-const login_email = document.getElementById('login-email');
-const login_password = document.getElementById('login-password');
-const login_button = document.getElementById('login-button');
-const login_error = document.getElementById('login-error')
-
 const signup_section = document.getElementById('signup-section');
 const signup_email = document.getElementById('signup-email');
 const signup_password = document.getElementById('signup-password');
@@ -14175,19 +14168,20 @@ const user_email = document.getElementById('user-email');
 const user_id = document.getElementById('user-id');
 user_data.style.display = 'none';
 
+const no_email_verified = document.getElementById('no-email-verified');
+const email_send = document.getElementById('email-send');
+no_email_verified.style.display = 'none';
+
+const email_verified = document.getElementById('email-verified');
+email_verified.style.display = 'none';
+
 const logout = document.getElementById('logout');
 logout.style.display = 'none';
 
-login_button.addEventListener('click', function () {
-    if (login_email.value.length && login_password.value.length) {
-        const email = login_email.value;
-        const password = login_password.value;
-        (0,firebase_auth__WEBPACK_IMPORTED_MODULE_1__.signInWithEmailAndPassword)(auth, email, password).catch(e => {
-            const e_ja = (0,_error_js__WEBPACK_IMPORTED_MODULE_2__.error)(e, 'signin');
-            login_error.textContent = e_ja;
-        });
-    }
-});
+const actionCodeSetting = {
+    url: 'chrome-extension://cajgpjhpanbnilchfoaofkecfnihnhad/done.html',
+    handleCodeApp: true
+}
 
 signup_button.addEventListener('click', function () {
     if (signup_email.value.length && signup_password.value.length) {
@@ -14195,8 +14189,10 @@ signup_button.addEventListener('click', function () {
         const password = signup_password.value;
         (0,firebase_auth__WEBPACK_IMPORTED_MODULE_1__.createUserWithEmailAndPassword)(auth, email, password)
             .then((userCredential) => {
-                (0,firebase_auth__WEBPACK_IMPORTED_MODULE_1__.sendEmailVerification)(userCredential.user).then(() => {
-                    console.log('send');
+                (0,firebase_auth__WEBPACK_IMPORTED_MODULE_1__.sendEmailVerification)(userCredential.user, actionCodeSetting).then(() => {
+                    console.log(userCredential.user);
+                }).catch(e => {
+                    console.log(e);
                 })
             }).catch(e => {
                 const e_ja = (0,_error_js__WEBPACK_IMPORTED_MODULE_2__.error)(e, 'signup');
@@ -14205,11 +14201,17 @@ signup_button.addEventListener('click', function () {
     }
 });
 
+email_send.addEventListener('click', function () {
+    (0,firebase_auth__WEBPACK_IMPORTED_MODULE_1__.sendEmailVerification)(auth.currentUser).then(() => {
+        no_email_verified.style.display = 'none';
+        email_verified.style.display = 'block';
+    })
+})
+
 logout.addEventListener('click', function () {
     if (auth.currentUser) {
         auth.signOut();
         logout.style.display = 'none';
-        login_section.style.display = 'block';
         signup_section.style.display = 'block';
         user_email.textContent = '';
         user_id.textContent = '';
@@ -14218,15 +14220,18 @@ logout.addEventListener('click', function () {
 
 auth.onAuthStateChanged(function (user) {
     if (user) {
-        console.log(user);
-        user_email.textContent = user.email;
-        user_id.textContent = user.uid;
-        user_data.style.display = 'block';
-        login_section.style.display = 'none';
-        signup_section.style.display = 'none';
-        logout.style.display = 'block';
-        login_error.textContent = '';
-        signup_error.textContent = '';
+        if (user.emailVerified) {
+            console.log(user);
+            user_email.textContent = user.email;
+            user_id.textContent = user.uid;
+            user_data.style.display = 'block';
+            signup_section.style.display = 'none';
+            logout.style.display = 'block';
+            signup_error.textContent = '';
+        } else {
+            console.log(user);
+            signup_section.style.display = 'none';
+        }
     }
 });
 })();

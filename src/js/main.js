@@ -37,7 +37,7 @@ logout.style.display = 'none';
 
 const actionCodeSetting = {
     url: 'chrome-extension://cajgpjhpanbnilchfoaofkecfnihnhad/done.html',
-    handleCodeApp: true
+    handleCodeInApp: true
 }
 
 signup_button.addEventListener('click', function () {

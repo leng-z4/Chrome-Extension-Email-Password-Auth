@@ -14178,20 +14178,13 @@ email_verified.style.display = 'none';
 const logout = document.getElementById('logout');
 logout.style.display = 'none';
 
-const actionCodeSetting = {
-    url: 'chrome-extension://cajgpjhpanbnilchfoaofkecfnihnhad/done.html',
-    handleCodeInApp: true
-}
-
 signup_button.addEventListener('click', function () {
     if (signup_email.value.length && signup_password.value.length) {
         const email = signup_email.value;
         const password = signup_password.value;
         (0,firebase_auth__WEBPACK_IMPORTED_MODULE_1__.createUserWithEmailAndPassword)(auth, email, password)
             .then((userCredential) => {
-                (0,firebase_auth__WEBPACK_IMPORTED_MODULE_1__.sendEmailVerification)(userCredential.user, actionCodeSetting).then(() => {
-                    console.log(userCredential.user);
-                }).catch(e => {
+                (0,firebase_auth__WEBPACK_IMPORTED_MODULE_1__.sendEmailVerification)(userCredential.user).catch(e => {
                     console.log(e);
                 })
             }).catch(e => {
@@ -14203,7 +14196,6 @@ signup_button.addEventListener('click', function () {
 
 email_send.addEventListener('click', function () {
     (0,firebase_auth__WEBPACK_IMPORTED_MODULE_1__.sendEmailVerification)(auth.currentUser).then(() => {
-        no_email_verified.style.display = 'none';
         email_verified.style.display = 'block';
     })
 })
@@ -14221,7 +14213,6 @@ logout.addEventListener('click', function () {
 auth.onAuthStateChanged(function (user) {
     if (user) {
         if (user.emailVerified) {
-            console.log(user);
             user_email.textContent = user.email;
             user_id.textContent = user.uid;
             user_data.style.display = 'block';
@@ -14229,7 +14220,7 @@ auth.onAuthStateChanged(function (user) {
             logout.style.display = 'block';
             signup_error.textContent = '';
         } else {
-            console.log(user);
+            no_email_verified.style.display = 'block';
             signup_section.style.display = 'none';
         }
     }

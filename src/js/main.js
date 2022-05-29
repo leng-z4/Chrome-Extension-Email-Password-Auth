@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, deleteUser } from 'firebase/auth';
 import { error } from './error.js';
 
 const firebaseConfig = {
@@ -35,6 +35,9 @@ email_verified.style.display = 'none';
 const logout = document.getElementById('logout');
 logout.style.display = 'none';
 
+const delete_account = document.getElementById('delete-account');
+delete_account.style.display = 'none';
+
 signup_button.addEventListener('click', function () {
     if (signup_email.value.length && signup_password.value.length) {
         const email = signup_email.value;
@@ -67,6 +70,15 @@ logout.addEventListener('click', function () {
     }
 });
 
+delete_account.addEventListener('click', function () {
+    const result = window.confirm('本当にアカウントを削除しますか？');
+    if (result) {
+        deleteUser(auth.currentUser).catch(e => {
+            console.log(e);
+        });
+    }
+})
+
 auth.onAuthStateChanged(function (user) {
     if (user) {
         if (user.emailVerified) {
@@ -76,6 +88,7 @@ auth.onAuthStateChanged(function (user) {
             signup_section.style.display = 'none';
             logout.style.display = 'block';
             signup_error.textContent = '';
+            delete_account.style.display = 'block';
         } else {
             no_email_verified.style.display = 'block';
             signup_section.style.display = 'none';

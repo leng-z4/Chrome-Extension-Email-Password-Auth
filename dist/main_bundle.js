@@ -14146,12 +14146,12 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const firebaseConfig = {
-    apiKey: "AIzaSyCLMdDi3V0UuReHYUqR_kRe9NpSBrzbf4g",
-    authDomain: "gace-id.firebaseapp.com",
-    projectId: "gace-id",
-    storageBucket: "gace-id.appspot.com",
-    messagingSenderId: "814051818099",
-    appId: "1:814051818099:web:951ad46d171c8c519ec806"
+    apiKey: "AIzaSyCoR1FGtRhfHG_IeYvZKgYJdRhxfEqiOdc",
+    authDomain: "cewf-id.firebaseapp.com",
+    projectId: "cewf-id",
+    storageBucket: "cewf-id.appspot.com",
+    messagingSenderId: "399762600225",
+    appId: "1:399762600225:web:9b21abc20016f5f2280e60"
 };
 (0,firebase_app__WEBPACK_IMPORTED_MODULE_0__.initializeApp)(firebaseConfig);
 const auth = (0,firebase_auth__WEBPACK_IMPORTED_MODULE_1__.getAuth)();
@@ -14162,6 +14162,12 @@ const signup_email = document.getElementById('signup-email');
 const signup_password = document.getElementById('signup-password');
 const signup_button = document.getElementById('signup-button');
 const signup_error = document.getElementById('signup-error');
+
+const signin_section = document.getElementById('signin-section');
+const signin_email = document.getElementById('signin-email');
+const signin_password = document.getElementById('signin-password');
+const signin_button = document.getElementById('signin-button');
+const signin_error = document.getElementById('signin-error');
 
 const user_data = document.getElementById('user-data');
 const user_email = document.getElementById('user-email');
@@ -14197,6 +14203,17 @@ signup_button.addEventListener('click', function () {
     }
 });
 
+signin_button.addEventListener('click', function () {
+    if (signin_email.value.length && signin_password.value.length) {
+        const email = signin_email.value;
+        const password = signin_password.value;
+        (0,firebase_auth__WEBPACK_IMPORTED_MODULE_1__.signInWithEmailAndPassword)(auth, email, password).catch(e => {
+            const e_ja = (0,_error_js__WEBPACK_IMPORTED_MODULE_2__.error)(e, 'signin');
+            signin_error.textContent = e_ja;
+        });
+    }
+});
+
 email_send.addEventListener('click', function () {
     (0,firebase_auth__WEBPACK_IMPORTED_MODULE_1__.sendEmailVerification)(auth.currentUser).then(() => {
         email_verified.style.display = 'block';
@@ -14208,6 +14225,7 @@ logout.addEventListener('click', function () {
         auth.signOut();
         logout.style.display = 'none';
         signup_section.style.display = 'block';
+        signin_section.style.display = 'block';
         user_email.textContent = '';
         user_id.textContent = '';
     }
@@ -14229,12 +14247,15 @@ auth.onAuthStateChanged(function (user) {
             user_id.textContent = user.uid;
             user_data.style.display = 'block';
             signup_section.style.display = 'none';
+            signin_section.style.display = 'none';
             logout.style.display = 'block';
+            signin_error.textContent = '';
             signup_error.textContent = '';
             delete_account.style.display = 'block';
         } else {
             no_email_verified.style.display = 'block';
             signup_section.style.display = 'none';
+            signin_section.style.display = 'none';
         }
     }
 });
